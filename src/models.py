@@ -16,7 +16,7 @@ class User(Base):
     last_name = Column(String(120), unique=False, nullable=False)
     email = Column(String(120), unique=False, nullable=False)
     password = Column(String(80), unique=False, nullable=False)
-    favorite_planets = relationship("Favorite", back_populates="planet")
+    # favorite_planets = relationship("Favorite", back_populates="planet")
 
     def to_dict(self):
         return {
@@ -34,15 +34,14 @@ class User(Base):
             # do not serialize the password, its a security breach
         }
 
-class Favorite(Base):
+class Post(Base):
     __tablename__ = 'favorite'
     id = Column(Integer, primary_key=True)
-    user_id = Column(ForeignKey('user.id'), nullable=False)
-    planet_id = Column(ForeignKey('planet.id'), nullable=True)
-    character_id = Column(ForeignKey('character.id'), nullable=True)
-    vehicle_id = Column(ForeignKey('vehicle.id'), nullable=True)
-    user = relationship("Planet", back_populates="users")
-    planet = relationship("User", back_populates="favorite_planets")
+    post_type_id = Column(ForeignKey('type_of_post.id'), nullable=True)
+    user_id = Column(ForeignKey('user.id'), nullable=True)
+    title = Column(String(120), unique=False, nullable=True)
+    description = Column(String(120), unique=False, nullable=True)
+    media_source = Column(String(120), unique=False, nullable=True)
 
 
     def to_dict(self):
@@ -53,10 +52,12 @@ class Favorite(Base):
 
     def serialize(self):
         return {
-            "character_id": self.character_id,
-            "vehicle_id": self.vehicle_id,
-            "planet_id": self.planet_id,
-            "user_id": self.user_id
+            "id" : self.id,
+            "post_type_id": self.post_type_id,
+            "user_id": self.user_id,
+            "title": self.title,
+            "description": self.description,
+            "media_source": self.media_source
         }
 
 class Character(Base):
